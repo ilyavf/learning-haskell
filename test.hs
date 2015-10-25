@@ -272,3 +272,16 @@ application1 = replicate 2 . product . map (*3) $ zipWith max [1,2] [4,5]
 
 -- October 24, 2015
 
+--
+-- Chapter 6. Modules
+-- 
+
+
+
+
+
+
+
+
+
+

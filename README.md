@@ -16,7 +16,7 @@ Cabal - Common Architecture for Building Applications and Libraries. Cabal is a 
 
 Hoogle is a Haskell API search engine
 
-*Install hoogle:*
+_Install Hoogle:_
 ```
 $ cabal --help
 Command line interface to the Haskell Cabal infrastructure.
@@ -56,3 +56,29 @@ nub :: Eq a => [a] -> [a]
 # Notes on the book Learn You a Haskell for Great Good
 
 ## Chapter 6. Modules
+
+### Import
+
+To import a module:
+```haskell
+import Data.List
+```
+
+To import only _nub_ and _sort_ from _Data.List_ module:
+```haskell
+import Data.List (nub, sort)
+```
+
+To import all except for _nub_ (may be you have your own one):
+```haskell
+import Data.List hiding (nub)
+```
+
+We can also do *qualified imports* to keep current scope clean, and add alias:
+```haskell
+import qualified Data.Map as M
+
+M.filter []
+```
+
+

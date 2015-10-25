@@ -1,3 +1,5 @@
+import Data.List
+
 -- Learning Haskell examples.
 
 doubleMe x = x + x
@@ -276,8 +278,24 @@ application1 = replicate 2 . product . map (*3) $ zipWith max [1,2] [4,5]
 -- Chapter 6. Modules
 -- 
 
+-- Find how many times each word appears in a string:
+str1 = "boom bip bip boom boom"
+wordCount = map (\xs -> (head xs, length xs)) .group . sort . words
+-- >>> [("bip",2),("boom",3)]
 
-
+-- Check if 1st list is wholly contained in the 2nd list:
+l1 = [3,4]
+l2 = [1,2,3,4,5]
+isContained :: (Eq a) => [a] -> [a] -> Bool
+-- v1:
+--isContained _ [] = False
+--isContained xs ys = (xs `elem` tails ys) || (isContained xs (init ys))
+-- v2:
+--isContained xs ys = foldl (||) False $ map (isPrefixOf xs) $ tails ys
+isContained xs ys = any (isPrefixOf xs) $ tails ys
+-- In the book:
+needle `isIn` haystack = any (needle `isPrefixOf`) (tails haystack)
+-- Data.List has "isInfixOf".
 
 
 

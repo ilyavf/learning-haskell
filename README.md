@@ -81,4 +81,6 @@ import qualified Data.Map as M
 M.filter []
 ```
 
+Check implementation of a function: goto http://hackage.haskell.org/package/base-4.8.1.0/docs/src/Data.OldList.html#isInfixOf
+
 

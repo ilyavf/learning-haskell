@@ -9,17 +9,14 @@ Learning Haskell
  - http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html - docs for Standard types, classes and related functions
  - http://hackage.haskell.org/package/base-4.8.1.0/docs/Data-List.html
 
-Local docs after installing 
 
 ## The Haskell Cabal and Hoodle
 
-Common Architecture for Building Applications and Libraries
-
-Cabal is a system for building and packaging Haskell libraries and programs.
+Cabal - Common Architecture for Building Applications and Libraries. Cabal is a system for building and packaging Haskell libraries and programs.
 
 Hoogle is a Haskell API search engine
 
-Install hoogle:
+*Install hoogle:*
 ```
 $ cabal --help
 Command line interface to the Haskell Cabal infrastructure.
@@ -31,9 +28,9 @@ Updating documentation index
 /Users/ilya/Library/Haskell/share/doc/x86_64-osx-ghc-7.10.2/index.html
 ```
 
-Local docs [file:///Users/ilya/Library/Haskell/share/doc/x86_64-osx-ghc-7.10.2/index.html] file:///Users/ilya/Library/Haskell/share/doc/x86_64-osx-ghc-7.10.2/index.html
+Local docs [file:///Users/ilya/Library/Haskell/share/doc/x86_64-osx-ghc-7.10.2/index.html](file:///Users/ilya/Library/Haskell/share/doc/x86_64-osx-ghc-7.10.2/index.html)
 
-Integrate Hoodle into GHCi:
+*Integrate Hoodle into GHCi:*
 ```
 $ echo >> ~/.ghci ':def hoogle \x -> return $ ":!hoogle \"" ++ x ++ "\""'
 $ echo >> ~/.ghci ':def doc \x -> return $ ":!hoogle --info \"" ++ x ++ "\""'
@@ -42,7 +39,7 @@ Download and build Hoogle databases:
 $ hoogle data
 ```
 
-Try :doc and :hoogle
+*Try :doc and :hoogle*
 ```
 ghci> :doc nub
 Data.List nub :: Eq a => [a] -> [a]

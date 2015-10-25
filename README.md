@@ -47,7 +47,9 @@ Try :doc and :hoogle
 ghci> :doc nub
 Data.List nub :: Eq a => [a] -> [a]
 
-O(n^2). The nub function removes duplicate elements from a list. In particular, it keeps only the first occurrence of each element. (The name nub means `essence'.) It is a special case of nubBy, which allows the programmer to supply their own equality test. 
+O(n^2). The nub function removes duplicate elements from a list. In particular, it 
+keeps only the first occurrence of each element. (The name nub means `essence'.) It 
+is a special case of nubBy, which allows the programmer to supply their own equality test. 
 
 From package base
 nub :: Eq a => [a] -> [a]

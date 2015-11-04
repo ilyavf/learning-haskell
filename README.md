@@ -16,7 +16,9 @@ Cabal - Common Architecture for Building Applications and Libraries. Cabal is a 
 
 Hoogle is a Haskell API search engine
 
-_Install Hoogle:_
+### Integrate Hoodle into GHCi
+
+First, install Hoogle:
 ```
 $ cabal --help
 Command line interface to the Haskell Cabal infrastructure.
@@ -28,9 +30,9 @@ Updating documentation index
 /Users/ilya/Library/Haskell/share/doc/x86_64-osx-ghc-7.10.2/index.html
 ```
 
-Local docs [file:///Users/ilya/Library/Haskell/share/doc/x86_64-osx-ghc-7.10.2/index.html](file:///Users/ilya/Library/Haskell/share/doc/x86_64-osx-ghc-7.10.2/index.html)
+After this there are local docs available [file:///Users/ilya/Library/Haskell/share/doc/x86_64-osx-ghc-7.10.2/index.html](file:///Users/ilya/Library/Haskell/share/doc/x86_64-osx-ghc-7.10.2/index.html)
 
-*Integrate Hoodle into GHCi:*
+Then, define new commands for ghci:
 ```
 $ echo >> ~/.ghci ':def hoogle \x -> return $ ":!hoogle \"" ++ x ++ "\""'
 $ echo >> ~/.ghci ':def doc \x -> return $ ":!hoogle --info \"" ++ x ++ "\""'

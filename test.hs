@@ -299,7 +299,29 @@ needle `isIn` haystack = any (needle `isPrefixOf`) (tails haystack)
 
 
 
+--
+-- Chapter 7.
+--
+-- Recursive data structure:
 
+-- data List a = Empty | Cons a (List a) deriving (Show, Read, Eq, Ord)
+-- 7 `Cons` (5 `Cons` Empty)
 
+-- Now lets define an infix constructor for our list:
+-- Infix constructors must begin with a colon.
+infixr 5 :-:
+data List a = Empty | a :-: (List a) deriving (Show, Read, Eq, Ord)
+--
+--    5 :-: (6 :-: Empty)
 
+-- Lets create infix list concat:
+infix 5 ^++
+(^++) :: List a -> List a -> List a
+Empty ^++ ys = ys
+(x :-: xs) ^++ ys = x :-: (xs ^++ ys)
+--
+--    ghci> let a = 5 :-: Empty
+--    ghci> let b = 7 :-: Empty
+--    ghci> a ^++ b
+--    5 :-: (7 :-: Empty)
 

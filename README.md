@@ -16,6 +16,18 @@ Cabal - Common Architecture for Building Applications and Libraries. Cabal is a 
 
 Hoogle is a Haskell API search engine
 
+### Install Haskell
+
+From here: https://www.haskell.org/platform/
+
+After installation check this local doc: file:///Library/Haskell/doc/start.html
+
+And set PATH if binaries were not symlinked into /usr/bin:
+```
+HASKELL_PATH="${HOME}/Library/Haskell/bin:/Library/Haskell/bin:/Library/Frameworks/GHC.framework/Versions/7.10.2-x86_64/usr/bin"
+PATH = "$PATH:HASKELL_PATH"
+```
+
 ### Integrate Hoodle into GHCi
 
 First, install Hoogle:

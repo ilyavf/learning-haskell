@@ -325,3 +325,9 @@ Empty ^++ ys = ys
 --    ghci> a ^++ b
 --    5 :-: (7 :-: Empty)
 
+-- Trees:
+
+data Tree a = Empty | Node a (Tree a) (Tree a) ()
+
+-- [test]
+-- [test]

@@ -100,3 +100,40 @@ let listOfFun = map (*) [0..]
 (listOfFun !! 4) 5                  -- Returns element with index 4 from array: [1,2,3,4,5] !! 4 == 5
 >>> 20
 
+
+--
+-- Type Classes (p138)
+--
+
+class Eq a where
+    (==) :: a -> a -> Bool
+    (/=) :: a -> a -> Bool
+    x == y = not (x /= y)
+    x /= y = not (x == y)
+
+data TrafficLight = Red | Yellow | Green
+
+-- Now we make type TrafficLight to be an instance of Eq:
+instance Eq TrafficLight where
+    Red == Red = True
+    Green == Green = True
+    Yellow == Yellow = True
+    _ == _ = False
+
+instance Show TrafficLight where
+    show Red = "Red Light"
+    show Yellow = "Red Yellow"
+    show Green = "Red Green"
+
+-- This has the same effect as using "deriving":
+data TrafficLight = Red | Yellow | Green deriving (Eq, Show)
+
+-- Subclass is just a class constraint on a class declaration:
+class (Eq a) => Ord a where
+    ...
+
+-- Parameterized Types as Instances of Type Classes:
+instance (Eq m) => Eq (Maybe m) where
+    Just x == Just y = x == y
+    Nothing == Nothing = True
+    _ == _ = False

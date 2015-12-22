@@ -168,6 +168,8 @@ type AssocList k v = [(k, v)]
 
 ### The Functor Type Class
 
+Functor is a type whose value can be mapped over.
+
 ```haskell
 class Functor f where
     fmap :: (a -> b) -> f a -> f b
@@ -195,3 +197,11 @@ ghci> fmap (+4) (Just 5)
 Just 9
 ```
 
+## Chapter 8. Input and Output
+
+```cmd
+$ ghc --make reverse.hs
+$ ./reverse
+it was all a dream
+ti saw lla a maerd
+```

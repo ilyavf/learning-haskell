@@ -318,4 +318,30 @@ instance Applicative Maybe where
     (Just f) <*> something = fmap f something
 ```
 
+Here is how List is an instance of Applicative:
+<!-- ```haskell
+instance Applicative List where
+    pure x = [x]
+    _ <*> [] = []
+    [] <*> x = []
+    [f:fs] <*> x = [f] <*> x : fs <*> x
+    [f] <*> [x:xs] = f x : [f] <*> xs
+```
+or -->
+```haskell
+instance Applicative List where
+    pure x = [x]
+    fs <*> xs = [ f x | f <- fs, x <- xs]
+```
+
+Example:
+```cmd
+ghci> [(+3), (*3), (^2)] <*> [1,2,3]
+[4,5,6,3,6,9,1,4,9]
+
+ghci> (++) <$> ["hm", "ha"] <*> ["?", "!"]
+["hm?","hm!","ha?","ha!"]
+```
+
+where _f <$>_ is the same as _pure f <*>_.
 

@@ -197,6 +197,21 @@ ghci> fmap (+4) (Just 5)
 Just 9
 ```
 
+IO is an instance of Functor:
+```haskell
+instance Functor IO where
+    fmap f action = do
+        result <- action
+        return (f result)
+```
+
+Lets use it:
+```cmd
+ghci> fmap (++"!") getLine
+hello
+hello!
+```
+
 ## Chapter 8. Input and Output
 
 ```cmd
@@ -205,3 +220,102 @@ $ ./reverse
 it was all a dream
 ti saw lla a maerd
 ```
+
+## Chapter 11. Applicative Functors
+
+### Functions as Functors
+
+fmap over functions is function composition.
+
+```
+  a -> b
+is the same as:
+  (->) a b
+```
+
+```haskell
+instance Functor ((->) r) where
+    fmap f g = (\x -> f (g x))
+```
+
+But _f (g x)_ is the same as _(f . g) x_. So:
+```haskell
+instance Functor ((->) r) where
+    fmap = (.)
+```
+
+Examples:
+```cmd
+ghci> (+3) `fmap` (*10) $ 5
+53
+ghci> (+3) . (*10) $ 5
+53
+```
+
+**Lifting a function**
+
+If we apply fmap to a function (a -> b) we will get:
+```cmd
+ghci> :t fmap (*3)
+fmap (*3) :: (Functor f, Num b) => f b -> f b
+```
+
+In other words (a -> b) is transformed into (f a -> f b). This is called _lifting a function_.
+So, fmap takes a function and lifts it so it operates on functor values.
+
+
+### Functor Laws
+
+1. fmap id = id
+2. fmap (f . g)  = fmap f . fmap g
+
+
+### Applicative Functors
+
+What if we lift a function that has two arguments?
+
+```cmd
+ghci>:t fmap (+) (Just 5)
+fmap (+) (Just 5) :: Num a => Maybe (a -> a)
+```
+
+Our _Just 5_ is now _Just (+5)_. What can we do with it?
+```cmd
+ghci> let a = fmap (+) (Just 5)
+ghci> fmap ($ 2) a
+Just 7
+```
+
+Can we do anything with _Just (+5)_ and _Just 8_?
+
+So, we have a function in a box and a value in a box. We can use applicative to get a new box with
+our boxed function applied to our boxed value!
+
+```haskell
+class (Functor f) => Applicative f where
+    pure :: a -> f a
+    (<*>) :: f (a -> b) -> f a -> f b
+```
+
+Example:
+```cmd
+ghci> Just (+3) <*> (Just 5)
+Just 8
+
+ghci> [(+3)] <*> [5]
+[8]
+
+ghci> pure (++"!") <*> getLine
+hello
+"hello!"
+```
+
+Here is how Maybe is an Applicative:
+```haskell
+instance Applicative Maybe where
+    pure = Just
+    Nothing <*> _ = Nothing
+    (Just f) <*> something = fmap f something
+```
+
+

@@ -310,7 +310,7 @@ hello
 "hello!"
 ```
 
-Here is how Maybe is an Applicative:
+### Maybe as Applicative:
 ```haskell
 instance Applicative Maybe where
     pure = Just
@@ -318,7 +318,7 @@ instance Applicative Maybe where
     (Just f) <*> something = fmap f something
 ```
 
-Here is how List is an instance of Applicative:
+### List as Applicative:
 <!-- ```haskell
 instance Applicative List where
     pure x = [x]
@@ -345,3 +345,53 @@ ghci> (++) <$> ["hm", "ha"] <*> ["?", "!"]
 
 where _f <$>_ is the same as _pure f <*>_.
 
+### IO as Applicative
+```haskell
+instance Applicative IO where
+    pure = return
+    fIO <*> xIO = do
+        f <- fIO
+        x <- xIO
+        return (f x)
+```
+
+Example:
+```haskel
+ghci> return (++"!") <*> getLine
+hello
+"hello!"
+```
+
+The following implementations do same thing:
+```haskell
+myAction :: IO String
+myAction = do
+    a <- getLine
+    b <- getLine
+    return $ a ++ b
+
+myAction = (++) <$> getLine <*> getLine
+
+main = do
+    a <- (++) <$> getLine <*> getLine
+    putStrLn $ "The two concatenated lines turn out to be: " ++ a
+```
+
+### Functions as Applicatives
+```haskell
+instance Applicative ((->) r) where
+    pure x = (\_ -> x)
+    f <*> g = (\x -> f x (g x))
+```
+
+Examples:
+```cmd
+ghci> (+3) <$> (*5) $ 2
+13
+
+ghci> (+) <$> (+3) <*> (*5) $ 2
+15
+
+ghci> (\x y z -> [x,y,z]) <$> (+3) <*> (*2) <*> (*3) $ 5
+[8,10,15]
+```

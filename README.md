@@ -263,6 +263,25 @@ fmap (*3) :: (Functor f, Num b) => f b -> f b
 In other words (a -> b) is transformed into (f a -> f b). This is called _lifting a function_.
 So, fmap takes a function and lifts it so it operates on functor values.
 
+Examples:
+```cmd
+ghci> let liftR3 = fmap (replicate 3)
+
+ghci> liftR3 [1,2,3]
+[[1,1,1],[2,2,2],[3,3,3]]
+
+ghci> liftR3 = (Just 4)
+Just ([4,4,4])
+
+ghci> liftR3 (Right "blah")
+Right ["blah","blah","blah"]
+
+ghci> liftR3 Nothing
+Nothing
+
+ghci> liftR3 (Left "foo")
+Left "foo"
+```
 
 ### Functor Laws
 
@@ -395,3 +414,59 @@ ghci> (+) <$> (+3) <*> (*5) $ 2
 ghci> (\x y z -> [x,y,z]) <$> (+3) <*> (*2) <*> (*3) $ 5
 [8,10,15]
 ```
+
+### Zip Lists
+
+List is an instance of Applicative and we can:
+```
+[(+1),(*1)] <*> [1,2]
+```
+
+This will give us a cross combination of the lists' elements:
+```
+[1+1, 2+1, 1*1, 2*1]
+```
+
+But what if we want only corresponding combinations like [1+1, 2*1]? Here is what we have Zip Lists for:
+
+```haskell
+instance Applicative ZipList
+    pure x = ZipList (repeat x)
+    ZipList fs <*> ZipList xs = ZipList ( [ f x | x <- xs, f <- fx] )
+    -- OR:
+    ZipList fs <*> ZipList xs = ZipList ( zipWith (\f x -> f x) fs xs )
+```
+
+Example (getZipList is used just because ZipList is not an instance of Show):
+```cmd
+ghci> import Control.Applicative
+ghci> getZipList $ (+) <$> ZipList [1,2,3] <*> ZipList [100,200,300]
+[101,202,303]
+```
+
+### Applicative Laws:
+
+- pure id <*> v = v
+- pure (.) <\*> u <\*> v <\*> w = u <\*> (v <\*> w)
+- pure f <\*> pure x = pure (f x)
+- u <\*> pure y = pure ($ y) <\*> u
+
+
+### Useful Functions for Applicatives
+
+```
+ghci> import Control.Applicative
+ghci> liftA2 (:) (Just 2) (Just [4])
+Just [2,4]
+
+ghci> (:) <$> Just 2 <*> Just [4]
+Just [2,4]
+
+ghci> sequenceA [(+3), (*2)] 5
+[8,10]
+
+ghci> and $ sequenceA [(>3), odd, (<10)] 5
+True
+```
+
+

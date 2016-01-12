@@ -327,8 +327,22 @@ Empty ^++ ys = ys
 
 -- Trees:
 
-data Tree a = Empty | Node a (Tree a) (Tree a) ()
+-- data Tree a = Empty | Node a (Tree a) (Tree a) ()
 
 -- [test]
 -- [test]
+
+newtype Product a = Product { getProduct :: a}
+    deriving (Eq, Show)
+
+instance Num a => Monoid (Product a) where
+    mempty = Product 1
+    Product x `mappend` Product y = Product (x * y)
+
+newtype Any = Any { getBoolOr :: Bool }
+    deriving (Eq, Show)
+
+instance Monoid Any where
+    mempty = Any False
+    Any x `mappend` Any y = Any (x || y)
 

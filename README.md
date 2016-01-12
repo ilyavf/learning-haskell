@@ -430,7 +430,7 @@ This will give us a cross combination of the lists' elements:
 But what if we want only corresponding combinations like [1+1, 2*1]? Here is what we have Zip Lists for:
 
 ```haskell
-instance Applicative ZipList
+instance Applicative ZipList where
     pure x = ZipList (repeat x)
     ZipList fs <*> ZipList xs = ZipList ( [ f x | x <- xs, f <- fx] )
     -- OR:
@@ -470,3 +470,62 @@ True
 ```
 
 
+## Chapter 12: MONOIDS
+
+Monoid type class is for types whose values can be combined together with a binary operation.
+
+```haskell
+newtype Product2 a = Product2 { getProduct2 :: a}
+    deriving (Eq, Show)
+
+instance Monoid Product2 where
+    mempty = 1
+    mappend = (*)
+```
+
+### Folding with monoids
+
+Lets implement foldMap for our Tree data structure.
+
+```haskell
+import qualified Data.Foldable as F
+
+data Tree a = EmptyTree | Node a (Tree a) (Tree a) deriving (Show)
+
+F.foldMap :: (Monoid m, Foldable t) => (a -> m) -> t a -> m
+
+instance F.Foldable (Tree a) where
+    foldMap f EmptyTree = mempty
+    foldMap f (Node x l r) = F.foldMap f l  `mappend`
+                             f x            `mappend`
+                             F.foldMal f r
+```
+
+Example:
+```haskell
+
+testTree =  Node 5
+                (Node 3
+                    (Node 1 EmptyTree EmptyTree)
+                    (Node 6 EmptyTree EmptyTree)
+                )
+                (Node 9
+                    (Node 8  EmptyTree EmptyTree)
+                    (Node 10 EmptyTree EmptyTree)
+                )
+```
+
+Then we can:
+```cmd
+ghci> F.foldl (+) 0 testTree
+42
+
+ghci> F.foldl (*) 1 testTree
+64800
+
+ghci> F.foldMap (\x -> Any $ x == 3) testTree
+True
+
+ghci> F.foldMap (\x -> [x]) testTree
+[1,3,6,5,8,9,10]
+```

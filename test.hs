@@ -346,3 +346,18 @@ instance Monoid Any where
     mempty = Any False
     Any x `mappend` Any y = Any (x || y)
 
+
+
+--
+-- Monads:
+--
+foo :: Maybe Int
+foo = Just 6        >>= (\x ->
+      Just (x + 5)  >>= (\y ->
+      Just (y * 2)))
+
+foo2 :: Maybe Int
+foo2 = do
+    x <- Just 6
+    y <- Just (x + 5)
+    Just (y * 2)

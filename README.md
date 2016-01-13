@@ -529,3 +529,143 @@ True
 ghci> F.foldMap (\x -> [x]) testTree
 [1,3,6,5,8,9,10]
 ```
+
+
+## Chapter 13. A FISTFUL OF MONADS
+
+Monad type class:
+```haskell
+class Monad m where
+    return :: a -> m a
+
+    (>>=) :: m a -> (a -> m b) -> m b
+
+    (>>) :: m a -> m b -> m b
+    x >> y = x >>= \_ -> y
+
+    fail :: String -> m a
+    fail msg = error msg
+```
+
+The monadic application (>>=) is called "bind".
+
+How Maybe is an instance of a Monad:
+```haskell
+instance Monad (Maybe a) where
+    return = Just
+    Nothing >>= f = Nothing
+    Just x >>= f = f x
+    fail _ = Nothing
+```
+
+Example:
+```cmd
+ghci> return "what" :: Maybe String
+Just "what"
+
+ghci> Just 9 >>= \x -> return (x+10)
+Just 19
+
+ghci> Nothing >>= \x -> return (x+10)
+Nothing
+```
+
+Lets write some code. "Walk the line" example.
+
+```haskell
+type Birds = Int
+type Pole = (Birds, Birds)
+
+landLeft :: Birds -> Pole -> Maybe Pole
+landLeft x (l, r)
+    | abs (l + x - r) < 4 = Just (l + x, r)
+    | otherwise = Nothing
+
+landRight :: Birds -> Pole -> Maybe Pole
+landRight x (l, r)
+    | abs (r + x - l) < 4 = Just (l, r + x)
+    | otherwise = Nothing
+```
+```cmd
+ghci> return (0,0) >>= landLeft 1 >>= landRight 4 >>= landLeft 2 >>= landLeft 1
+(4,4)
+```
+
+The value "return (0,0)" is a Pole in a minimal monadic context. Like "pure" for applicative functor.
+
+Lets add another function:
+```haskell
+banana :: Pole -> Maybe Pole
+banana _ = Nothing
+```
+```cmd
+ghci> return (0,0) >>= landLeft 1 >>= landRight 2 >>= banana >>= landRight 1
+Nothing
+
+# But we can use (>>):
+
+ghci> Just 3 >> Just 4
+Just 4
+
+ghci> Nothing >> Just 3
+Nothing
+
+ghci> return (0,0) >>= landLeft 1 >> Nothing >>= landRight 1
+Nothing
+```
+
+Lets see what would we do without monads:
+```haskell
+routine :: Maybe Pole
+routine = case landLeft 1 (0,0) of
+    Nothing -> Nothing
+    Just pole1 -> case landRight 4 pole1 of
+        Nothing -> Nothing
+        Just pole2 -> case landLeft 2 pole2 of
+            Nothing -> Nothing
+            Just pole3 -> landLeft 1 pole3
+```
+this is a classic example of how the Maybe monad saves a lot of time.
+
+
+### do Notation
+
+What if we need to chain monads like this:
+```cmd
+ghci> Just 6 >>= \x -> Just (x + 5)
+Just 11
+
+ghci> Just 6 >>= \x -> Just (x + 5) >>= \y -> Just (y * 2)
+Just 22
+```
+
+This is the same as writing it this way:
+```haskell
+foo :: Maybe Int
+foo = Just 6        >>= (\x ->
+      Just (x + 5)  >>= (\y ->
+      Just (y * 2)))
+```
+
+With do notation this will look like:
+```haskell
+foo = do
+    x <- Just 6
+    y <- Just (x + 5)
+    Just (y * 2)
+```
+Both examples will return Just 22.
+
+**do notation** is just a different syntax for chaining monadic values.
+
+With a failure (Nothing):
+
+```haskell
+foo = do
+    x <- Nothing
+    y <- Just (x + 5)
+    Just (y * 2)
+```
+foo will result in Nothing.
+
+So, we can chain monads withoug worrying about a getting a failure from any of them!

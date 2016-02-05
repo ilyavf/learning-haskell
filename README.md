@@ -551,10 +551,10 @@ The monadic application (>>=) is called "bind".
 
 How Maybe is an instance of a Monad:
 ```haskell
-instance Monad (Maybe a) where
+instance Monad Maybe where
     return = Just
     Nothing >>= f = Nothing
-    Just x >>= f = f x
+    Just x >>= f  = f x
     fail _ = Nothing
 ```
 
@@ -669,3 +669,56 @@ foo = do
 foo will result in Nothing.
 
 So, we can chain monads withoug worrying about a getting a failure from any of them!
+
+splitWhen :: (a -> Bool) -> [a] -> [[a]]
+splitWhen f [] = []
+splitWhen f a = takeUntil f a : (splitWhen $ takeAfter f a)
+
+### Monad Laws
+
+**1. Left Identity**
+```haskel
+return x >>= f   ≡   f x
+```
+Ex:
+```cmd
+ghci> return 5 >>= \x -> Just (1 + x)
+Just 6
+
+ghci> (\x -> Just (1 + x)) $ 5
+Just 6
+
+ghci> return 9 >>= \x -> [x,x,x]
+[9,9,9]
+
+ghci> (\x -> [x,x,x]) $ 9
+[9,9,9]
+
+```
+
+**2. Right Identity**
+```haskel
+m a >>= \x -> return x   ≡   m a
+```
+Ex:
+```cmd
+ghci> Just 5 >>= \x -> return x
+Just 5
+
+ghci> [1,2,3] >>= \x -> return x
+[1,2,3]
+
+where:
+xs >>= f = concat (fmap f xs)
+```
+**3. Associativity**
+```haskel
+m a >>= f >>= g   ≡   m a >>= \x -> f x >>= g
+```
+Ex. monadic composition:
+```haskel
+(<=<) :: (b -> m c) -> (a -> m b) -> (a -> m c)
+f <=< g = \x -> g x >>= f
+
+(f <=< g) <=< h   ≡   f <=< (g <=< h)
+```

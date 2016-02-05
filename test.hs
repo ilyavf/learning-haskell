@@ -361,3 +361,13 @@ foo2 = do
     x <- Just 6
     y <- Just (x + 5)
     Just (y * 2)
+
+-- splitWhen (== ';') "A;BB;;DDDD"
+-- takeWhile (== ';') "A;BB;;DDDD"
+
+splitWhen :: (a -> Bool) -> [a] -> [[a]]
+splitWhen f [] = []
+splitWhen f a = x : (splitWhen f xs)
+    where splitted = (span (not . f) a)
+          x = fst splitted
+          _:xs = snd splitted
